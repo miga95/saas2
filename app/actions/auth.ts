@@ -1,6 +1,7 @@
+"use server"
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -14,7 +15,6 @@ export async function register(formData: FormData) {
     email: formData.get("email"),
     password: formData.get("password"),
   });
-
   if (!validatedFields.success) {
     return { error: "Invalid input data" };
   }

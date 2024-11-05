@@ -14,7 +14,6 @@ import { register } from "@/app/actions/auth";
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [state, formAction] = useFormState(register, null);
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
@@ -35,7 +34,6 @@ export function SignUpForm() {
       if (signInResult?.error) {
         throw new Error(signInResult.error);
       }
-
       router.push('/');
       router.refresh();
     } catch (error: any) {
@@ -85,9 +83,6 @@ export function SignUpForm() {
         </div>
       </div>
 
-      {state?.error && (
-        <p className="text-sm text-red-500 text-center">{state.error}</p>
-      )}
 
       <Button
         type="submit"

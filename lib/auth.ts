@@ -1,72 +1,35 @@
-import { NextAuthOptions } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
+import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
+import prisma from './prisma';
+import { CustomSession } from '../types'
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
-      name: 'credentials',
-      credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        const prismaClient = new PrismaClient();
+type ParametersGetServerSession =
+  | []
+  | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
+  | [NextApiRequest, NextApiResponse];
 
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentials');
-        }
-
-        const user = await prismaClient.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        });
-
-        if (!user || !user.password) {
-          throw new Error('Invalid credentials');
-        }
-
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error('Invalid credentials');
-        }
-
-        return user;
-      },
-    }),
-  ],
-  pages: {
-    signIn: '/auth/signin',
-  },
-  session: {
-    strategy: 'jwt',
-  },
-  callbacks: {
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub!;
+export const getAuthSession = async (...parameters: ParametersGetServerSession): Promise<CustomSession | null> => {
+  const session = await getServerSession(...parameters, authOptions);
+  if(session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email
       }
-      return session;
-    },
-    async jwt({ token, user, account }) {
-      if (account && user) {
-        token.accessToken = account.access_token;
+    })
+
+    if(user) {
+      return {
+        ...session,
+        user: {
+          ...session?.user,
+          id: user.id
+        }
       }
-      return token;
-    },
-  },
+    }
+  }
+  
+  return session as CustomSession;
 };
+
+export { authOptions };

@@ -38,7 +38,7 @@ export function SignInForm() {
         redirect: true,
         callbackUrl: '/',
       });
-    } catch (error) {
+    } catch (error) {      
       console.error('Sign in error:', error);
     } finally {
       setIsLoading(false);
