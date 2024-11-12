@@ -14,6 +14,7 @@ export function PricingCards() {
   const router = useRouter();
 
   const handleSubscribe = async (priceId: string) => {
+    
     try {
       setLoading(priceId);
       
@@ -21,7 +22,8 @@ export function PricingCards() {
         router.push('/auth/signin');
         return;
       }
-
+      
+      console.log("prix", priceId);
       const response = await fetch('/api/stripe/subscription', {
         method: 'POST',
         headers: {

@@ -47,6 +47,8 @@ model User {
   password      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  //Payment
   stripeCustomerId String?
   subscription   Subscription?
   accounts      Account[]

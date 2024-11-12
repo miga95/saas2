@@ -8,6 +8,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { PrismaClient } from '@prisma/client';
 
 import prisma from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 
 declare module "next-auth" {
   interface Session {
@@ -41,6 +42,29 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt"
+  },
+  events: {
+    createUser: async (message) => {
+      const userId = message.user.id;
+      const email = message.user.email;
+      const name = message.user.name;
+
+      if(!userId || !email) return;
+
+      const stripeCustomer = await stripe.customers.create({
+        email: email ?? undefined,
+        name: name ?? undefined
+      })
+
+      await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          stripeCustomerId: stripeCustomer.id
+        }
+      })
+    }
   },
   pages:{
     signIn: '/auth/signIn',

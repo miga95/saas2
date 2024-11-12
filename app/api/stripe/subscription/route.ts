@@ -45,8 +45,7 @@ export async function POST(req: Request) {
         where: { id: user.id },
         data: { stripeCustomerId: customerId },
       });
-    }
-
+    }        
     // Create a checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,

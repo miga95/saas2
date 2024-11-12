@@ -1,66 +1,50 @@
 import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
 
-export async function POST(req: Request) {
-  const body = await req.text();
-  const signature = headers().get('Stripe-Signature') as string;
+export async function POST(req: NextRequest) {
+  const body = await req.json() as Stripe.Event
+  console.log("EVENT", body.type);
+  const session = await body.data.object as Stripe.Checkout.Session;
+  const subscription = await stripe.subscriptions.retrieve(
+    session.subscription as string
+  );
+  switch (body.type) {
+    case 'checkout.session.completed':
+      
+      console.log("subscription found", subscription);
+      
+      const createdSubscription = await prisma.subscription.create({
+        data: {
+          userId: subscription.metadata.userId,
+          stripeSubscriptionId: subscription.id as string,
+          stripePriceId: subscription.items.data[0].price.id,
+          stripeCurrentPeriodEnd: new Date(
+            subscription.current_period_end * 1000
+          ),
+          status: subscription.status,
+        },
+      });
+      console.log("created : ", createdSubscription);
+      
+      break;
+    case 'invoice.payment_succeeded':
 
-  let event: Stripe.Event;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-  } catch (error: any) {
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
-  }
-
-  const session = event.data.object as Stripe.Checkout.Session;
-
-  if (event.type === 'checkout.session.completed') {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
-
-    if (!session?.metadata?.userId) {
-      return new NextResponse('User id is required', { status: 400 });
-    }
-
-    await prisma.subscription.create({
-      data: {
-        userId: session.metadata.userId,
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: subscription.customer as string,
-        stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
-        status: subscription.status,
-      },
-    });
-  }
-
-  if (event.type === 'invoice.payment_succeeded') {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
-
-    await prisma.subscription.update({
-      where: {
-        stripeSubscriptionId: subscription.id,
-      },
-      data: {
-        stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
-      },
-    });
+      await prisma.subscription.update({
+        where: {
+          stripeSubscriptionId: subscription.id,
+        },
+        data: {
+          stripePriceId: subscription.items.data[0].price.id,
+          stripeCurrentPeriodEnd: new Date(
+            subscription.current_period_end * 1000
+          ),
+        },
+      });
+    default:
+      break;
   }
 
   return new NextResponse(null, { status: 200 });

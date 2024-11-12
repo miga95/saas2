@@ -9,7 +9,7 @@ export const PLANS = {
   starter: {
     name: 'Starter',
     price: 100,
-    priceId: process.env.STRIPE_STARTER_PRICE_ID!,
+    priceId: "price_1QGSiCA0g4fLWq2DrHowZGLd",
     features: [
       'Basic AI content generation',
       'Up to 10 videos per month',
@@ -33,8 +33,7 @@ export const PLANS = {
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID!,
     features: [
       'Enterprise AI content generation',
-      'Unlimited videos',
-      '24/7 Premium support',
+      'Unlimited videos', 
       'Custom avatars & branding',
       'API access',
     ],
