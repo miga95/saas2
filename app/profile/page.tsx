@@ -31,7 +31,7 @@ export default async function ProfilePage() {
 
       <div className="space-y-6">
         <ProfileForm user={user} />
-        <SubscriptionInfo subscription={user.subscription} />
+        <SubscriptionInfo subscription={user.subscription} user={user} />
       </div>
     </div>
   );

@@ -9,20 +9,22 @@ export const PLANS = {
   starter: {
     name: 'Starter',
     price: 100,
+    credits: 10,
     priceId: "price_1QGSiCA0g4fLWq2DrHowZGLd",
     features: [
       'Basic AI content generation',
-      'Up to 10 videos per month',
+      '10 credits per month',
       'Standard support',
     ],
   },
   premium: {
     name: 'Premium',
     price: 200,
-    priceId: process.env.STRIPE_PREMIUM_PRICE_ID!,
+    credits: 20,
+    priceId: "price_1QGSidA0g4fLWq2Dvyl0qLja",
     features: [
       'Advanced AI content generation',
-      'Up to 50 videos per month',
+      '20 credits per month',
       'Priority support',
       'Custom avatars',
     ],
@@ -30,10 +32,11 @@ export const PLANS = {
   business: {
     name: 'Business',
     price: 1000,
-    priceId: process.env.STRIPE_BUSINESS_PRICE_ID!,
+    credits: 50,
+    priceId: "price_1QGSjAA0g4fLWq2DnPp1a7r4",
     features: [
       'Enterprise AI content generation',
-      'Unlimited videos', 
+      '50 credits per month', 
       'Custom avatars & branding',
       'API access',
     ],

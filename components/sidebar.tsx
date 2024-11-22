@@ -35,6 +35,12 @@ const routes = [
     href: '/profile',
     color: 'text-orange-700',
   },
+  {
+    label: 'Pricing',
+    icon: UserCircle,
+    href: '/pricing',
+    color: 'text-orange-700',
+  },
 ];
 
 const createSubRoutes = [
