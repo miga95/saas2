@@ -15,32 +15,19 @@ const filters = {
     { id: 'male', label: 'Male' },
     { id: 'female', label: 'Female' },
   ],
-  age: [
-    { id: '18-25', label: '18-25' },
-    { id: '26-35', label: '26-35' },
-    { id: '36+', label: '36+' },
-  ],
   location: [
     { id: 'indoor', label: 'Indoor' },
     { id: 'outdoor', label: 'Outdoor' },
-  ],
-  style: [
-    { id: 'casual', label: 'Casual' },
-    { id: 'business', label: 'Business' },
   ],
 };
 
 interface AvatarFiltersProps {
   onFilterChange: (filters: {
     gender: string[];
-    age: string[];
-    style: string[];
     location: string[];
   }) => void;
   activeFilters: {
     gender: string[];
-    age: string[];
-    style: string[];
     location: string[];
   };
 }
@@ -72,8 +59,6 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
   const resetFilters = () => {
     onFilterChange({
       gender: [],
-      age: [],
-      style: [],
       location: [],
     });
   };

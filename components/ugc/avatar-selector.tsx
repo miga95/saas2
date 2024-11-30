@@ -4,30 +4,20 @@ import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AvatarFilters } from './avatar-filters';
 import { AvatarGrid } from './avatar-grid';
-import { AspectRatioSelector } from './aspect-ratio-selector';
 
 interface Filters {
   gender: string[];
-  age: string[];
-  style: string[];
   location: string[];
 }
 
 export function AvatarSelector() {
   const [filters, setFilters] = useState<Filters>({
     gender: [],
-    age: [],
-    style: [],
     location: [],
   });
-  const [aspectRatio, setAspectRatio] = useState('9:16');
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
-  };
-
-  const handleAspectRatioChange = (ratio: string) => {
-    setAspectRatio(ratio);
   };
 
   return (
@@ -47,8 +37,7 @@ export function AvatarSelector() {
         </TabsList>
       </Tabs>
       <AvatarFilters onFilterChange={handleFilterChange} activeFilters={filters} />
-      <AspectRatioSelector value={aspectRatio} onChange={handleAspectRatioChange} />
-      <AvatarGrid filters={filters} aspectRatio={aspectRatio} />
+      <AvatarGrid filters={filters} />
     </div>
   );
 }

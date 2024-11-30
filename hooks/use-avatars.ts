@@ -5,8 +5,6 @@ import { AvatarResponse, Avatar } from '@/types/avatar';
 
 interface AvatarFilters {
   gender: string[];
-  age: string[];
-  style: string[];
   location: string[];
 }
 
@@ -33,22 +31,6 @@ function filterAvatars(avatars: Avatar[], filters: AvatarFilters) {
         return avatar.gender === genderMatch;
       });
       if (!genderMatches) return false;
-    }
-
-    // Age filter (assuming age range is in keywords or video_scene)
-    if (filters.age.length > 0) {
-      const ageMatches = filters.age.some(age => 
-        avatar.keywords?.includes(age) || avatar.video_scene?.includes(age)
-      );
-      if (!ageMatches) return false;
-    }
-
-    // Style filter (assuming style is in keywords or video_scene)
-    if (filters.style.length > 0) {
-      const styleMatches = filters.style.some(style => 
-        avatar.keywords?.includes(style) || avatar.video_scene?.includes(style)
-      );
-      if (!styleMatches) return false;
     }
 
     // Location filter (assuming location is in keywords or video_scene)
