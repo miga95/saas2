@@ -9,47 +9,28 @@ const API_CONFIG = {
 
 export async function GET(req: NextRequest) {
   try {
-    if (!API_CONFIG.CREATIFY_API_ID || !API_CONFIG.CREATIFY_API_KEY) {
-      console.error('Missing Creatify API credentials');
-      return new NextResponse(
-        'API configuration missing',
-        { status: 500 }
-      );
-    }
-
     const session = await getAuthSession();
     if (!session?.user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const page = searchParams.get('page') || '1';
-
-    const response = await fetch(
-      `${API_CONFIG.CREATIFY_API_URL}/personas/?page=${page}`,
-      {
-        headers: {
-          'X-API-ID': API_CONFIG.CREATIFY_API_ID,
-          'X-API-KEY': API_CONFIG.CREATIFY_API_KEY,
-          'Accept': 'application/json',
-        },
-        next: { revalidate: 3600 }, // Cache for 1 hour
-      }
-    );
+    const response = await fetch(`${API_CONFIG.CREATIFY_API_URL}/personas/`, {
+      headers: {
+        'X-API-ID': API_CONFIG.CREATIFY_API_ID!,
+        'X-API-KEY': API_CONFIG.CREATIFY_API_KEY!,
+        'Accept': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       throw new Error(`API responded with status ${response.status}`);
     }
 
     const data = await response.json();
-    
-    return NextResponse.json({
-      results: data,
-      count: Array.isArray(data) ? data.length : 0,
-      page: parseInt(page),
-    });
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Avatar API error:', error);
+    console.error('Error fetching avatars:', error);
     return new NextResponse(
       error instanceof Error ? error.message : 'Failed to fetch avatars',
       { status: 500 }

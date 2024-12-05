@@ -2,142 +2,107 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Paintbrush, 
-  FolderKanban, 
-  UserCircle, 
-  Video, 
-  Database,
-  Settings,
-  LogOut
+  PlusCircle, 
+  FolderOpen, 
+  Package, 
+  UserCircle2, 
+  GraduationCap,
+  MoreVertical
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const routes = [
-  {
-    label: 'Create',
-    icon: Paintbrush,
-    href: '/create',
-    color: 'text-violet-500',
-  },
-  {
-    label: 'Projects',
-    icon: FolderKanban,
-    href: '/projects',
-    color: 'text-pink-700',
-  },
-  {
-    label: 'Profile',
-    icon: UserCircle,
-    href: '/profile',
-    color: 'text-orange-700',
-  },
-  {
-    label: 'Pricing',
-    icon: UserCircle,
-    href: '/pricing',
-    color: 'text-orange-700',
-  },
-];
-
-const createSubRoutes = [
-  {
-    label: 'AI UGC Creator',
-    icon: Video,
-    href: '/create/ugc',
-    color: 'text-green-700',
-  },
-  {
-    label: 'Product Fine-tuning',
-    icon: Database,
-    href: '/create/fine-tune',
-    color: 'text-blue-700',
-  },
-];
-
-export default function Sidebar() {
+export function Sidebar() {
   const pathname = usePathname();
-  const { status } = useSession();
-
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/auth/signin' });
-  };
-
-  if (status !== 'authenticated') {
-    return null;
-  }
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-slate-900 text-white">
-      <div className="px-3 py-2 flex-1">
-        <Link href="/dashboard" className="flex items-center pl-3 mb-14">
-          <div className="relative w-8 h-8 mr-4">
-            <Paintbrush className="w-8 h-8 text-violet-500" />
+    <div className="w-60 bg-slate-950 border-r border-slate-800 flex flex-col h-screen">
+      {/* Logo et header */}
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8">
+            <svg viewBox="0 0 24 24" className="text-white">
+              {/* Logo SVG ici */}
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"/>
+            </svg>
           </div>
-          <h1 className="text-2xl font-bold">
-            AI Studio
-          </h1>
-        </Link>
-        <div className="space-y-1">
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                'text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition',
-                pathname === route.href ? 'text-white bg-white/10' : 'text-zinc-400',
-              )}
-            >
-              <div className="flex items-center flex-1">
-                <route.icon className={cn('h-5 w-5 mr-3', route.color)} />
-                {route.label}
-              </div>
-            </Link>
-          ))}
-
-          {pathname.includes('/create') && (
-            <div className="pl-4 pt-4 space-y-1">
-              {createSubRoutes.map((route) => (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    'text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition',
-                    pathname === route.href ? 'text-white bg-white/10' : 'text-zinc-400',
-                  )}
-                >
-                  <div className="flex items-center flex-1">
-                    <route.icon className={cn('h-5 w-5 mr-3', route.color)} />
-                    {route.label}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          <span className="font-semibold text-lg">creatify</span>
+          <span className="text-xs text-slate-400">studio</span>
         </div>
       </div>
-      <div className="px-3 py-2 space-y-2 border-t border-slate-800">
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="w-full justify-start text-zinc-400 hover:text-white hover:bg-white/10"
-          onClick={() => {}}
-        >
-          <Settings className="h-5 w-5 mr-3" />
-          Settings
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLogout}
-          className="w-full justify-start text-zinc-400 hover:text-white hover:bg-red-500/10"
-        >
-          <LogOut className="h-5 w-5 mr-3 text-red-500" />
-          Log out
-        </Button>
+
+      {/* User info */}
+      <div className="p-4 border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-purple-700 flex items-center justify-center text-white">
+            T
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">team Adeekt</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </div>
+            <span className="text-xs text-slate-400">team.adeekt@gmail.com</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex-1 p-2 space-y-1">
+        <Link href="/create" 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
+                pathname.includes('/create') 
+                  ? 'bg-slate-800 text-white' 
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}>
+          <PlusCircle className="h-4 w-4" />
+          Create
+        </Link>
+        <Link href="/projects"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-900">
+          <FolderOpen className="h-4 w-4" />
+          Projects
+        </Link>
+        <Link href="/products"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-900">
+          <Package className="h-4 w-4" />
+          Products
+        </Link>
+        <Link href="/custom-avatars"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-900">
+          <UserCircle2 className="h-4 w-4" />
+          Custom Avatars
+          <span className="ml-auto text-[10px] font-medium bg-purple-600 px-1.5 py-0.5 rounded">NEW</span>
+        </Link>
+        <Link href="/learning"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-900">
+          <GraduationCap className="h-4 w-4" />
+          Learning Center
+        </Link>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-slate-800">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center">
+                <span className="text-[10px] text-white"></span>
+              </div>
+              <span className="text-sm">1950 credits</span>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" className="text-xs">
+            Upgrade
+          </Button>
+        </div>
       </div>
     </div>
   );

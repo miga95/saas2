@@ -20,9 +20,12 @@ export interface Avatar {
   type: string;
 }
 
-// types/avatar.ts
-export interface AvatarResponse {
-  results: Avatar[];
-  count: number;
-  page: number;
+export type AvatarResponse = Avatar[];
+
+export interface CustomAvatar {
+  id: string;
+  creator_name: string;
+  preview_image_1_1: string;
+  squared_preview_video: string;
+  // ... autres champs nécessaires
 }
