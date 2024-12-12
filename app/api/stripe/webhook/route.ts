@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
 
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
         const priceId = subscription.items.data[0].price.id;
-        const plan = Object.values(PLANS).find(p => p.priceId === priceId);
         
         // Check if user already has a subscription and cancel it in Stripe
         const existingSubscription = await prisma.subscription.findFirst({
@@ -47,7 +46,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Create new subscription
-        const createdSubscription = await prisma.subscription.create({
+        await prisma.subscription.create({
           data: {
             userId: subscription.metadata.userId,
             stripeSubscriptionId: subscription.id,
@@ -59,21 +58,6 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        if (plan) {
-          const user = await prisma.user.findUnique({
-            where: { id: subscription.metadata.userId },
-            select: { credits: true }
-          });
-
-          await prisma.user.update({
-            where: {
-              id: subscription.metadata.userId,
-            },
-            data: {
-              credits: (user?.credits || 0) + plan.credits,
-            },
-          });
-        }
         break;
       }
 
@@ -100,6 +84,7 @@ export async function POST(req: NextRequest) {
           },
         });
 
+        //  ajout de crédits
         if (newPlan) {
           const user = await prisma.user.findUnique({
             where: { id: subscription.metadata.userId },
