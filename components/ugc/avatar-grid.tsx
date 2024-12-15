@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useAvatars } from '@/hooks/use-avatars';
 import { Avatar } from '@/types/avatar';
@@ -35,9 +35,9 @@ export function AvatarGrid({ filters, text, aspectRatio }: AvatarGridProps) {
   const handleGeneratePreview = async () => {
     if (!selectedAvatar || !text.trim()) return;
     try {
-      await generatePreview({ 
-        avatarId: selectedAvatar.id, 
-        text, 
+      generatePreview({
+        avatarId: selectedAvatar.id,
+        text,
         aspectRatio,
         accentId: selectedAccentId,
         greenScreen
@@ -107,7 +107,7 @@ export function AvatarGrid({ filters, text, aspectRatio }: AvatarGridProps) {
       {dialogType === 'voices' && (
         <VoiceDialog
           onClose={() => setDialogType(null)}
-          onVoiceSelect={(voiceId) => {
+          onVoiceSelect={(voiceId: SetStateAction<string | null>) => {
             setSelectedAccentId(voiceId);
             setDialogType(null);
           }}

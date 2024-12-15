@@ -8,6 +8,10 @@ export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
 
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Vérifier les crédits de l'utilisateur
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },

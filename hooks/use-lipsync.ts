@@ -53,7 +53,6 @@ export function useLipsync() {
       refetchIntervalInBackground: true,
       refetchOnWindowFocus: true,
       staleTime: 0,
-      cacheTime: 0,
       retry: true,
       retryDelay: 2000,
     });

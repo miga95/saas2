@@ -2,12 +2,16 @@ import { NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/auth';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { previewId: string } }
+  _req: Request,
+  props: {
+    params: Promise<{ previewId: string }>;
+  }
 ) {
   try {
     const session = await getAuthSession();
-    const { previewId } = await params;
+    const params = await props.params;
+
+    const { previewId } = params;
 
     const response = await fetch(`${process.env.CREATIFY_API_URL}/lipsyncs/${previewId}`, {
       headers: {

@@ -21,6 +21,8 @@ interface PreviewInput {
   avatarId: string;
   text: string;
   aspectRatio?: '9:16' | '16:9' | '1:1';
+  accentId?: string | null;
+  greenScreen?: boolean;
 }
 
 async function generatePreview(input: PreviewInput): Promise<PreviewResponse> {

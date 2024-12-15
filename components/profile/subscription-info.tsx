@@ -15,7 +15,6 @@ interface SubscriptionInfoProps {
 export function SubscriptionInfo({ subscription, user }: SubscriptionInfoProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',

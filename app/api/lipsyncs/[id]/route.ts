@@ -2,17 +2,20 @@ import { NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/auth';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  _req: Request,
+  props: {
+    params: Promise<{ id: string }>;
+  }
 ) {
   try {
     const session = await getAuthSession();
+    const params = await props.params;
 
     if (!session?.user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { id } = await params;
+    const { id } = params;
 
     const response = await fetch(`https://api.creatify.ai/api/lipsyncs/${id}/`, {
       headers: {
@@ -50,4 +53,4 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}
