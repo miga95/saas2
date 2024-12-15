@@ -4,16 +4,10 @@ import { getAuthSession } from '@/lib/auth';
 export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
-
-    if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
     const body = await req.json();
     const { avatarId, text, aspectRatio, backgroundAssetImageUrl, accentId, greenScreen } = body;
 
     const formattedRatio = aspectRatio?.replace(':', 'x') || '9x16';
-
     const response = await fetch('https://api.creatify.ai/api/lipsyncs/preview/', {
       method: 'POST',
       headers: {
@@ -39,7 +33,7 @@ export async function POST(req: Request) {
         background_asset_image_url: backgroundAssetImageUrl
       })
     });
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Invalid response' }));
       console.error('[PREVIEW_API_ERROR]', {
@@ -49,25 +43,19 @@ export async function POST(req: Request) {
         requestBody: body
       });
       
-      return new NextResponse(
-        JSON.stringify({
-          error: errorData.message || 'Failed to generate preview',
-          details: errorData
-        }), 
-        { status: response.status }
-      );
+      return NextResponse.json({
+        error: errorData.message || 'Failed to generate preview',
+        details: errorData
+      }, { status: response.status });
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('[PREVIEW_ERROR]', error);
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Internal Error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
-      { status: 500 }
-    );
+    return NextResponse.json({
+      error: 'Internal Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

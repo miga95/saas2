@@ -14,6 +14,7 @@ interface PreviewResponse {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   webhook_url?: string;
   preview?: string;
+  projectId?: string;
 }
 
 interface PreviewInput {
@@ -33,7 +34,6 @@ async function generatePreview(input: PreviewInput): Promise<PreviewResponse> {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       console.error('[PREVIEW_REQUEST_ERROR]', {
         status: response.status,
@@ -59,7 +59,6 @@ export function usePreview() {
       toast.loading('Generating preview...');
     },
     onSuccess: (data) => {
-      console.log('[PREVIEW_SUCCESS]', data);
       toast.dismiss();
       toast.success('Preview generation started');
       // Rediriger vers l'éditeur avec l'ID de la prévisualisation

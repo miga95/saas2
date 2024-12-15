@@ -9,11 +9,6 @@ const returnUrl = absoluteUrl('/profile');
 export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
-
-    if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: { subscription: true },
@@ -26,7 +21,6 @@ export async function POST(req: Request) {
     if (!user.subscription) {
       return new NextResponse('No active subscription', { status: 400 });
     }
-    console.log("return url ", returnUrl);
     
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId!,

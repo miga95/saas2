@@ -68,28 +68,10 @@ export default function Editor() {
     },
   });
 
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      // Vérifier l'origine du message pour la sécurité
-      if (event.origin !== 'https://api.creatify.ai') return;
 
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'duration') {
-          setVideoDuration(data.duration);
-        }
-      } catch (error) {
-        console.error('Error parsing message:', error);
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, []);
 
   const handleRender = async () => {
     if (!data || isRendering) return;
-
     setIsRendering(true);
     try {
       const response = await fetch('/api/render', {
@@ -109,7 +91,6 @@ export default function Editor() {
       });
 
       const responseData = await response.json();
-
       if (!response.ok) {
         if (response.status === 402) {
           toast.error(`Insufficient credits. You need ${responseData.requiredCredits} credits to render this video.`);
@@ -184,7 +165,7 @@ export default function Editor() {
                 <div className="space-y-4 w-full">
                   <div className="relative w-full pt-[56.25%]">
                     <iframe
-                      src={`${data.preview}?enableApi=1`}
+                      src={data.preview}
                       className="absolute inset-0 w-full h-full rounded-lg shadow-lg"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen

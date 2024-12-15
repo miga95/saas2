@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -9,32 +10,50 @@ export async function GET() {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const response = await fetch('https://api.creatify.ai/api/lipsyncs/', {
-      headers: {
-        'X-API-ID': process.env.CREATIFY_API_ID!,
-        'X-API-KEY': process.env.CREATIFY_API_KEY!,
-      },
-    });
+    console.log('Fetching projects for user:', session.user.id);
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Invalid response' }));
-      console.error('[PROJECTS_API_ERROR]', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData,
-      });
-      
-      return new NextResponse(
-        JSON.stringify({
-          error: errorData.message || 'Failed to fetch projects',
-          details: errorData
-        }), 
-        { status: response.status }
-      );
+    // Récupérer les projets de l'utilisateur depuis Prisma
+    const userProjects = await prisma.project.findMany({
+      where: {
+        userId: session.user.id
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    if (!userProjects.length) {
+      return NextResponse.json([]);
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    // Récupérer les détails de chaque projet depuis l'API Creatify
+    const projectsWithDetails = await Promise.all(
+      userProjects.map(async (project) => {
+        try {
+          const response = await fetch(`https://api.creatify.ai/api/lipsyncs/${project.creatifyId}`, {
+            headers: {
+              'X-API-ID': process.env.CREATIFY_API_ID!,
+              'X-API-KEY': process.env.CREATIFY_API_KEY!,
+            },
+          });
+
+          if (!response.ok) {
+            console.error(`Failed to fetch project ${project.creatifyProjectId}:`, response.status);
+            return null;
+          }
+
+          const projectData = await response.json();
+          return projectData;
+        } catch (error) {
+          console.error(`Error fetching project ${project.creatifyProjectId}:`, error);
+          return null;
+        }
+      })
+    );
+
+    // Filtrer les projets null (en cas d'erreur) et renvoyer les données
+    const validProjects = projectsWithDetails.filter(project => project !== null);    
+    return NextResponse.json(validProjects);
   } catch (error) {
     console.error('[PROJECTS_ERROR]', error);
     return new NextResponse(

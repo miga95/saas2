@@ -15,7 +15,6 @@ export default async function ProfilePage() {
     where: { id: session.user.id },
     include: { subscription: true },
   });
-
   if (!user) {
     redirect('/auth/signin');
   }

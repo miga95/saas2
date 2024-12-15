@@ -39,7 +39,7 @@ export function UserProfile({ userName, userEmail }: UserProfileProps) {
                     Profile
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/auth/signin' })}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </DropdownMenuItem>

@@ -8,10 +8,6 @@ export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
 
-    if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
     // Vérifier les crédits de l'utilisateur
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -19,18 +15,15 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      return new NextResponse('User not found', { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     if (user.credits < RENDER_COST) {
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Insufficient credits',
-          requiredCredits: RENDER_COST,
-          currentCredits: user.credits
-        }),
-        { status: 402 }
-      );
+      return NextResponse.json({
+        error: 'Insufficient credits',
+        requiredCredits: RENDER_COST,
+        currentCredits: user.credits
+      }, { status: 402 });
     }
 
     const body = await req.json();
@@ -63,31 +56,38 @@ export async function POST(req: Request) {
         requestBody: body
       });
       
-      return new NextResponse(
-        JSON.stringify({
-          error: errorData.message || 'Failed to start render',
-          details: errorData
-        }), 
-        { status: response.status }
-      );
+      return NextResponse.json({
+        error: errorData.message || 'Failed to start render',
+        details: errorData
+      }, { status: response.status });
     }
 
+    const data = await response.json();
+
+    // Créer le projet
+    const project = await prisma.project.create({
+      data: {
+        userId: session.user.id,
+        creatifyId: data.id
+      }
+    });
+ 
     // Déduire les crédits après le succès du rendu
     await prisma.user.update({
       where: { id: session.user.id },
       data: { credits: user.credits - RENDER_COST }
     });
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ ...data, projectId: project.id });
   } catch (error) {
-    console.error('[RENDER_ERROR]', error);
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Internal Error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
-      { status: 500 }
-    );
+    console.error('[RENDER_ERROR]', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    return NextResponse.json({
+      error: 'Internal Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 } 

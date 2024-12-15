@@ -63,6 +63,17 @@ CREATE TABLE "Subscription" (
     CONSTRAINT "Subscription_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Project" (
+    "id" TEXT NOT NULL,
+    "creatifyProjectId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE INDEX "Account_userId_idx" ON "Account"("userId");
 
@@ -93,6 +104,15 @@ CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("s
 -- CreateIndex
 CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Project_creatifyProjectId_key" ON "Project"("creatifyProjectId");
+
+-- CreateIndex
+CREATE INDEX "Project_userId_idx" ON "Project"("userId");
+
+-- CreateIndex
+CREATE INDEX "Project_creatifyProjectId_idx" ON "Project"("creatifyProjectId");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -101,3 +121,6 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

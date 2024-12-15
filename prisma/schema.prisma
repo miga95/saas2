@@ -39,21 +39,20 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  credits       Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  //Payment
-  stripeCustomerId String?
-  subscription   Subscription?
-  accounts      Account[]
-  sessions      Session[]
+  id              String        @id @default(cuid())
+  name            String?
+  email           String?       @unique
+  emailVerified   DateTime?
+  image           String?
+  password        String?
+  credits         Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  accounts        Account[]
+  sessions        Session[]
+  stripeCustomerId String?      @unique
+  subscription    Subscription?
+  projects        Project[]
 }
 
 model VerificationToken {
@@ -76,4 +75,13 @@ model Subscription {
   updatedAt            DateTime  @updatedAt
 
   @@index([userId])
+}
+
+model Project {
+  id         String   @id @default(cuid())
+  creatifyId String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

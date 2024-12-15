@@ -96,7 +96,13 @@ export default function ProjectsPage() {
               <div
                 key={project.id}
                 className="bg-slate-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer"
-                onClick={() => router.push(`/project/${project.id}`)}
+                onClick={() => {
+                  if (project.progress === 0) {
+                    router.push(`/editor?previewId=${project.id}`);
+                  } else {
+                    router.push(`/project/${project.id}`);
+                  }
+                }}
               >
                 <div className="aspect-video bg-slate-800 relative">
                   {project.output ? (

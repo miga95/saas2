@@ -10,10 +10,6 @@ const API_CONFIG = {
 export async function GET(req: NextRequest) {
   try {
     const session = await getAuthSession();
-    if (!session?.user) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-
     const response = await fetch(`${API_CONFIG.CREATIFY_API_URL}/personas/`, {
       headers: {
         'X-API-ID': API_CONFIG.CREATIFY_API_ID!,
