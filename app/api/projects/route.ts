@@ -28,9 +28,9 @@ export async function GET() {
 
     // Récupérer les détails de chaque projet depuis l'API Creatify
     const projectsWithDetails = await Promise.all(
-      userProjects.map(async (project: { creatifyId: string }) => {
+      userProjects.map(async (project: { creatifyProjectId: string }) => {
         try {
-          const response = await fetch(`https://api.creatify.ai/api/lipsyncs/${project.creatifyId}`, {
+          const response = await fetch(`https://api.creatify.ai/api/lipsyncs/${project.creatifyProjectId}`, {
             headers: {
               'X-API-ID': process.env.CREATIFY_API_ID!,
               'X-API-KEY': process.env.CREATIFY_API_KEY!,
@@ -38,14 +38,14 @@ export async function GET() {
           });
 
           if (!response.ok) {
-            console.error(`Failed to fetch project ${project.creatifyId}:`, response.status);
+            console.error(`Failed to fetch project ${project.creatifyProjectId}:`, response.status);
             return null;
           }
 
           const projectData = await response.json();
           return projectData;
         } catch (error) {
-          console.error(`Error fetching project ${project.creatifyId}:`, error);
+          console.error(`Error fetching project ${project.creatifyProjectId}:`, error);
           return null;
         }
       })

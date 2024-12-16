@@ -79,7 +79,7 @@ model Subscription {
 
 model Project {
   id         String   @id @default(cuid())
-  creatifyId String
+  creatifyProjectId String
   userId     String
   user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
