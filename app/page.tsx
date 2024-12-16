@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Video, Database, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
+  redirect('/auth/signin');
   return (
     <div className="flex h-screen">
       <div className="flex-1 overflow-auto">
