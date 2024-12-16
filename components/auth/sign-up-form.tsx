@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { register } from "@/app/actions/auth";
@@ -14,11 +14,40 @@ import { toast } from "sonner";
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+
+  const validatePassword = (password: string) => {
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+    return "";
+  };
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
     try {
+      const password = formData.get('password') as string;
+      const confirmPassword = formData.get('confirmPassword') as string;
+      
+      const passwordValidationError = validatePassword(password);
+      if (passwordValidationError) {
+        setPasswordError(passwordValidationError);
+        setIsLoading(false);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setPasswordError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+
       const result = await register(formData);
 
       if (result.error) {
@@ -26,10 +55,22 @@ export function SignUpForm() {
         return;
       }
 
-      toast.success("Compte créé avec succès!");
-      router.push('/auth/signin');
+      toast.success("Account created successfully!");
+
+      // If registration successful, sign in
+      const signInResult = await signIn('credentials', {
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+        redirect: true,
+        callbackUrl: '/'
+      });
+
+      if (signInResult?.error) {
+        throw new Error(signInResult.error);
+      }
+
     } catch (error: any) {
-      toast.error(error.message || "Une erreur est survenue");
+      toast.error(error.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -64,22 +105,70 @@ export function SignUpForm() {
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Create a password"
-            required
-            className="bg-slate-800 border-slate-700"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Create a password"
+              required
+              className="bg-slate-800 border-slate-700 pr-10"
+              onChange={(e) => {
+                const error = validatePassword(e.target.value);
+                setPasswordError(error);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          <p className="text-xs text-slate-400">
+            Password must be at least 6 characters long and contain one uppercase letter
+          </p>
         </div>
-      </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              required
+              className="bg-slate-800 border-slate-700 pr-10"
+              onChange={(e) => {
+                const password = (document.getElementById('password') as HTMLInputElement).value;
+                if (e.target.value !== password) {
+                  setPasswordError("Passwords do not match");
+                } else {
+                  setPasswordError("");
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+            >
+              {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+        </div>
+
+        {passwordError && (
+          <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+        )}
+      </div>
 
       <Button
         type="submit"
         className="w-full"
-        disabled={isLoading}
+        disabled={isLoading || !!passwordError}
       >
         {isLoading ? (
           <>

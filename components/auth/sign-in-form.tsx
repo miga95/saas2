@@ -8,18 +8,22 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   
   const {
     register,
@@ -36,11 +40,15 @@ export function SignInForm() {
         email: data.email,
         password: data.password,
         redirect: true,
-        callbackUrl: '/',
+        callbackUrl: '/'
       });
+
+      if (result?.error) {
+        toast.error('Invalid email or password');
+        setIsLoading(false);
+      }
     } catch (error) {      
-      console.error('Sign in error:', error);
-    } finally {
+      toast.error('An error occurred while signing in');
       setIsLoading(false);
     }
   };
@@ -64,13 +72,22 @@ export function SignInForm() {
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            {...register('password')}
-            className="bg-slate-800 border-slate-700"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              {...register('password')}
+              className="bg-slate-800 border-slate-700 pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-sm text-red-500">{errors.password.message}</p>
           )}
