@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { Sidebar } from '@/components/sidebar';
 import { Providers } from './providers';
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -28,6 +28,7 @@ export default function RootLayout({
             </main>
           </div>
           <Toaster />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
