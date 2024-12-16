@@ -1,14 +1,16 @@
-import { getCurrentUser } from '@/lib/auth';
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserCredits } from './user-credits';
 import { Navigation } from './navigation';
 import { LogoutButton } from './logoutButton';
+import { useSession } from 'next-auth/react';
 
-export async function Sidebar() {
-  const user = await getCurrentUser();
+export function Sidebar() {
+ const { data: session } = useSession();
     
-  if (!user) {
+  if (!session?.user) {
     return null;
   }
 
@@ -23,7 +25,7 @@ export async function Sidebar() {
         </Link>
       </div>
       <div className="flex justify-around p-4 border-b border-slate-800">
-          <UserCredits userCredits={user?.credits || 0} />
+          <UserCredits />
           <Link href="/pricing">
             <Button size="sm" variant="outline" className="text-xs">
               Upgrade

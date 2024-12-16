@@ -9,9 +9,7 @@ export async function GET() {
     if (!session?.user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
-    console.log('Fetching projects for user:', session.user.id);
-
+    
     // Récupérer les projets de l'utilisateur depuis Prisma
     const userProjects = await prisma.project.findMany({
       where: {
@@ -26,9 +24,8 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    // Récupérer les détails de chaque projet depuis l'API Creatify
     const projectsWithDetails = await Promise.all(
-      userProjects.map(async (project: { creatifyProjectId: string }) => {
+      userProjects.map(async (project) => {
         try {
           const response = await fetch(`https://api.creatify.ai/api/lipsyncs/${project.creatifyProjectId}`, {
             headers: {
@@ -51,16 +48,18 @@ export async function GET() {
       })
     );
 
-    // Filtrer les projets null (en cas d'erreur) et renvoyer les données
-    const validProjects = projectsWithDetails.filter((project: null) => project !== null);    
+    const validProjects = projectsWithDetails.filter(Boolean);
     return NextResponse.json(validProjects);
+    
   } catch (error) {
-    console.error('[PROJECTS_ERROR]', error);
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Internal Error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[PROJECTS_ERROR]', errorMessage);
+    
+    return NextResponse.json(
+      { 
+        error: 'Internal Error', 
+        details: errorMessage 
+      }, 
       { status: 500 }
     );
   }
