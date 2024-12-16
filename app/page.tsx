@@ -1,12 +1,12 @@
-import { Sidebar } from '@/components/sidebar';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Video, Database, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+
+import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-export default function Home() {
-  redirect('/auth/signin');
+export default async function Home() {
+  const session = await getAuthSession();  
+  if (!session) {
+    redirect('/auth/signin');
+  }
   return (
     <div className="flex h-screen">
       <div className="flex-1 overflow-auto">

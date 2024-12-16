@@ -2,29 +2,43 @@ import { GetServerSidePropsContext } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './next-auth';
 import prisma from './prisma';
-import { CustomSession } from '../types';
 
-export const getAuthSession = async (): Promise<CustomSession | null> => {
+export const getAuthSession = async () => {
   const session = await getServerSession(authOptions);
-  if(session?.user?.email) {
-    const user = await prisma.user.findUnique({
+  return session;
+};
+
+export async function getCurrentUser() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return null;
+    }
+
+    const currentUser = await prisma.user.findUnique({
       where: {
         email: session.user.email
+      },
+      include: {
+        subscription: true
       }
     });
 
-    if(user) {
-      return {
-        ...session,
-        user: {
-          ...session?.user,
-          id: user.id
-        }
-      };
+    if (!currentUser) {
+      return null;
     }
+
+    return {
+      ...currentUser,
+      createdAt: currentUser.createdAt.toISOString(),
+      updatedAt: currentUser.updatedAt.toISOString(),
+      emailVerified: currentUser.emailVerified?.toISOString() || null,
+    };
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
   }
-  
-  return session as CustomSession;
-};
+}
 
 export { authOptions };

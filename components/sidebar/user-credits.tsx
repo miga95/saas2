@@ -2,15 +2,14 @@
 
 import { Coins } from 'lucide-react';
 
-interface UserCreditsProps {
-  credits: number;
-}
-
-export function UserCredits({ credits }: UserCreditsProps) {
+export function UserCredits( {userCredits}: {userCredits: number}) {
+  
   return (
-    <div className="flex items-center gap-2 px-3 py-2 mb-2 rounded-lg text-sm bg-slate-900">
-      <Coins className="h-4 w-4 text-indigo-400" />
-      <span className="text-indigo-400">{credits} crédits</span>
+    <div className="flex items-center gap-x-2">
+      <Coins className="h-4 w-4 text-yellow-500" />
+      <span className="text-sm">
+        {userCredits} credits
+      </span>
     </div>
   );
 } 

@@ -4,12 +4,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { UserCredits } from './user-credits';
 import { Navigation } from './navigation';
-import { UserProfile } from './user-profile';
-import { useUser } from '@/hooks/use-user';
+import { UserProfile } from './logoutButton';
 
 export function SidebarClient() {
-  const { data: user, isLoading } = useUser();
-
+const user = {
+  credits: 100,
+  name: 'John Doe',
+  email: 'john.doe@example.com'
+}
   return (
     <div className="flex flex-col h-full bg-slate-950 text-white border-r border-slate-800">
       <div className="p-6">

@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import {
   PlusCircle,
   FolderOpen,
-  Package,
   UserCircle2,
   CreditCard,
+  User,
 } from 'lucide-react';
 
 export function Navigation() {
@@ -25,11 +25,6 @@ export function Navigation() {
       label: 'Projects',
     },
     {
-      href: '/products',
-      icon: Package,
-      label: 'Products',
-    },
-    {
       href: '/custom-avatars',
       icon: UserCircle2,
       label: 'Custom Avatars',
@@ -40,6 +35,11 @@ export function Navigation() {
       icon: CreditCard,
       label: 'Pricing',
     },
+    {
+      href: '/profile',
+      icon: User,
+      label: 'Profile',
+    }
   ];
 
   return (
