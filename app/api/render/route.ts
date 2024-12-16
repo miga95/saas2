@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getAuthSession } from '@/lib/auth';
+import { checkAuth } from '@/lib/auth-check';
 import prisma from '@/lib/prisma';
 
 const RENDER_COST = 5; // Coût en crédits pour le rendu
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
+  const session = await checkAuth();
+  
+  if (session instanceof NextResponse) {
+    return session;
+  }
+
   try {
-    const session = await getAuthSession();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     // Vérifier les crédits de l'utilisateur
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       }, { status: 402 });
     }
 
-    const body = await req.json();
+    const body = await request.json();
     const { aspect_ratio, text, creator, green_screen, accent, no_caption, background_asset_image_url } = body;
 
     const response = await fetch('https://api.creatify.ai/api/lipsyncs/', {
