@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { register } from "@/app/actions/auth";
+import { toast } from "sonner";
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,23 +22,14 @@ export function SignUpForm() {
       const result = await register(formData);
 
       if (result.error) {
-        throw new Error(result.error);
+        toast.error(result.error);
+        return;
       }
 
-      // If registration successful, sign in
-      const signInResult = await signIn('credentials', {
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-        redirect: false,
-      });
-
-      if (signInResult?.error) {
-        throw new Error(signInResult.error);
-      }
-      router.push('/');
-      router.refresh();
+      toast.success("Compte créé avec succès!");
+      router.push('/auth/signin');
     } catch (error: any) {
-      console.error('Sign up error:', error);
+      toast.error(error.message || "Une erreur est survenue");
     } finally {
       setIsLoading(false);
     }
