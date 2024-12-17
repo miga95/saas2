@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Avatar } from '@/types/avatar';
 import { Button } from '@/components/ui/button';
 import { Volume2, Maximize2, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AvatarCardProps {
   avatar: Avatar;
@@ -24,7 +25,10 @@ export const AvatarCard = memo(({
 }: AvatarCardProps) => {
   return (
     <div
-      className="relative group aspect-square rounded-lg overflow-hidden bg-slate-900 cursor-pointer"
+      className={cn(
+        "relative group aspect-square rounded-lg overflow-hidden cursor-pointer transition-all duration-200",
+        isSelected ? "ring-2 ring-green-500" : "bg-slate-900"
+      )}
       onMouseEnter={() => onHover(avatar.id)}
       onMouseLeave={() => onHover(null)}
       onClick={() => onSelect(avatar)}
@@ -77,8 +81,8 @@ export const AvatarCard = memo(({
       </div>
 
       {isSelected && (
-        <div className="absolute top-2 right-2 bg-primary rounded-full p-1">
-          <Check className="h-4 w-4" />
+        <div className="absolute top-2 right-2 bg-green-500 rounded-full p-1">
+          <Check className="h-4 w-4 text-white" />
         </div>
       )}
     </div>

@@ -7,11 +7,11 @@ interface AspectRatioSelectorProps {
 
 export function AspectRatioSelector({ value, onChange }: AspectRatioSelectorProps) {
   return (
-    <div className="flex gap-2 justify-center">
+    <div className="flex gap-4 justify-left">
       <Button
         variant={value === '9:16' ? 'default' : 'outline'}
         onClick={() => onChange('9:16')}
-        className="w-14 h-14 flex flex-col items-center justify-center"
+        className="w-24 h-14 flex flex-col items-center justify-center"
       >
         <div className="w-4 h-6 border-2 rounded" />
         <span className="text-xs mt-1">9:16</span>
@@ -19,7 +19,7 @@ export function AspectRatioSelector({ value, onChange }: AspectRatioSelectorProp
       <Button
         variant={value === '16:9' ? 'default' : 'outline'}
         onClick={() => onChange('16:9')}
-        className="w-14 h-14 flex flex-col items-center justify-center"
+        className="w-24 h-14 flex flex-col items-center justify-center"
       >
         <div className="w-6 h-4 border-2 rounded" />
         <span className="text-xs mt-1">16:9</span>
@@ -27,7 +27,7 @@ export function AspectRatioSelector({ value, onChange }: AspectRatioSelectorProp
       <Button
         variant={value === '1:1' ? 'default' : 'outline'}
         onClick={() => onChange('1:1')}
-        className="w-14 h-14 flex flex-col items-center justify-center"
+        className="w-24 h-14 flex flex-col items-center justify-center"
       >
         <div className="w-5 h-5 border-2 rounded" />
         <span className="text-xs mt-1">1:1</span>

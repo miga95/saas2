@@ -4,6 +4,7 @@ import { Search, Star, RefreshCw, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { cn } from "@/lib/utils";
 import {
   Popover,
   PopoverContent,
@@ -25,10 +26,12 @@ interface AvatarFiltersProps {
   onFilterChange: (filters: {
     gender: string[];
     location: string[];
+    type?: string;
   }) => void;
   activeFilters: {
     gender: string[];
     location: string[];
+    type?: string;
   };
 }
 
@@ -48,6 +51,10 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
     onFilterChange(newFilters);
   };
 
+  const handleTypeChange = (type: string) => {
+    onFilterChange({ ...activeFilters, type });
+  };
+
   const isFilterActive = (category: string, value: string) => {
     return activeFilters[category as keyof typeof activeFilters].includes(value);
   };
@@ -60,11 +67,39 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
     onFilterChange({
       gender: [],
       location: [],
+      type: 'realistic'
     });
   };
 
   return (
     <div className="space-y-4">
+      <div className="flex  border-slate-800">
+        <button
+          onClick={() => handleTypeChange('realistic')}
+          className={cn(
+            "pb-4 px-6 text-sm font-medium relative flex items-center gap-2",
+            "hover:text-white transition-colors",
+            (!activeFilters.type || activeFilters.type === 'realistic') ? "text-white" : "text-slate-400",
+            (!activeFilters.type || activeFilters.type === 'realistic') && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
+          )}
+        >
+        
+          Realistic Avatar
+        </button>
+        <button
+          onClick={() => handleTypeChange('styled')}
+          className={cn(
+            "pb-4 px-6 text-sm font-medium relative flex items-center gap-2",
+            "hover:text-white transition-colors",
+            activeFilters.type === 'styled' ? "text-white" : "text-slate-400",
+            activeFilters.type === 'styled' && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
+          )}
+        >
+         
+          Styled Avatar
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           {Object.entries(filters).map(([category, options]) => (

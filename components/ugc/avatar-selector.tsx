@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AvatarFilters } from './avatar-filters';
 import { AvatarGrid } from './avatar-grid';
 import { AspectRatioSelector } from './aspect-ratio-selector';
+import { Textarea } from '../ui/textarea';
 
 interface Filters {
   gender: string[];
@@ -27,11 +28,12 @@ export function AvatarSelector() {
     <div className="space-y-8">
       <div className="space-y-4">
         <h2 className="text-xl">Script</h2>
-        <textarea
+        <Textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter your script here..."
           className="w-full min-h-[200px] p-4 rounded-lg bg-secondary/50 resize-none"
+          maxLength={3600} 
         />
       </div>
 
