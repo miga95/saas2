@@ -11,7 +11,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const filters = {
+type FilterOption = {
+  id: string;
+  label: string;
+};
+
+type FilterCategory = 'gender' | 'location';
+
+const filters: Record<FilterCategory, FilterOption[]> = {
   gender: [
     { id: 'male', label: 'Male' },
     { id: 'female', label: 'Female' },
@@ -22,29 +29,27 @@ const filters = {
   ],
 };
 
+interface Filters {
+  gender: string[];
+  location: string[];
+  type?: string;
+}
+
 interface AvatarFiltersProps {
-  onFilterChange: (filters: {
-    gender: string[];
-    location: string[];
-    type?: string;
-  }) => void;
-  activeFilters: {
-    gender: string[];
-    location: string[];
-    type?: string;
-  };
+  onFilterChange: (filters: Filters) => void;
+  activeFilters: Filters;
 }
 
 export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersProps) {
-  const handleFilterChange = (category: string, value: string, checked: boolean) => {
+  const handleFilterChange = (category: FilterCategory, value: string, checked: boolean) => {
     const newFilters = { ...activeFilters };
-    const categoryFilters = newFilters[category as keyof typeof newFilters];
+    const categoryFilters = [...(newFilters[category] || [])];
     
     if (checked) {
-      newFilters[category as keyof typeof newFilters] = [...categoryFilters, value];
+      newFilters[category] = [...categoryFilters, value];
     } else {
-      newFilters[category as keyof typeof newFilters] = categoryFilters.filter(
-        (filter) => filter !== value
+      newFilters[category] = categoryFilters.filter(
+        (filter: string) => filter !== value
       );
     }
 
@@ -55,12 +60,12 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
     onFilterChange({ ...activeFilters, type });
   };
 
-  const isFilterActive = (category: string, value: string) => {
-    return activeFilters[category as keyof typeof activeFilters].includes(value);
+  const isFilterActive = (category: FilterCategory, value: string): boolean => {
+    return activeFilters[category]?.includes(value) || false;
   };
 
-  const getActiveFilterCount = (category: string) => {
-    return activeFilters[category as keyof typeof activeFilters].length;
+  const getActiveFilterCount = (category: FilterCategory): number => {
+    return activeFilters[category]?.length || 0;
   };
 
   const resetFilters = () => {
@@ -73,7 +78,7 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
 
   return (
     <div className="space-y-4">
-      <div className="flex  border-slate-800">
+      <div className="flex border-b border-slate-800">
         <button
           onClick={() => handleTypeChange('realistic')}
           className={cn(
@@ -83,7 +88,6 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
             (!activeFilters.type || activeFilters.type === 'realistic') && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
           )}
         >
-        
           Realistic Avatar
         </button>
         <button
@@ -95,14 +99,13 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
             activeFilters.type === 'styled' && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
           )}
         >
-         
           Styled Avatar
         </button>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
-          {Object.entries(filters).map(([category, options]) => (
+          {(Object.entries(filters) as [FilterCategory, FilterOption[]][]).map(([category, options]) => (
             <Popover key={category}>
               <PopoverTrigger asChild>
                 <Button 
@@ -144,7 +147,7 @@ export function AvatarFilters({ onFilterChange, activeFilters }: AvatarFiltersPr
         </div>
 
         <div className="flex gap-2">
-          {Object.values(activeFilters).some(filters => filters.length > 0) && (
+          {(activeFilters.gender.length > 0 || activeFilters.location.length > 0) && (
             <Button
               variant="ghost"
               size="sm"
