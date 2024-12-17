@@ -23,7 +23,6 @@ export function PricingCards() {
         return;
       }
       
-      console.log("prix", priceId);
       const response = await fetch('/api/stripe/subscription', {
         method: 'POST',
         headers: {

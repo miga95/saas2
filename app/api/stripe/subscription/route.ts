@@ -5,7 +5,7 @@ import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import { absoluteUrl } from '@/lib/utils';
 
-const returnUrl = absoluteUrl('/dashboard');
+const returnUrl = absoluteUrl('/ugc/create');
 
 export async function POST(req: Request) {
   try {

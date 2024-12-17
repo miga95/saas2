@@ -10,7 +10,7 @@ export const PLANS = {
     name: 'Starter',
     price: 100,
     credits: 10,
-    priceId: "price_1QGSiCA0g4fLWq2DrHowZGLd",
+    priceId: "price_1QIzwYA0g4fLWq2DewEG6bth",
     features: [
       'Basic AI content generation',
       '10 credits per month',
@@ -21,7 +21,7 @@ export const PLANS = {
     name: 'Premium',
     price: 200,
     credits: 20,
-    priceId: "price_1QGSidA0g4fLWq2Dvyl0qLja",
+    priceId: "price_1QI7yhA0g4fLWq2D3pHk1Y9A",
     features: [
       'Advanced AI content generation',
       '20 credits per month',
@@ -33,7 +33,7 @@ export const PLANS = {
     name: 'Business',
     price: 1000,
     credits: 50,
-    priceId: "price_1QGSjAA0g4fLWq2DnPp1a7r4",
+    priceId: "price_1QI7xGA0g4fLWq2D9xHT3W2B",
     features: [
       'Enterprise AI content generation',
       '50 credits per month', 
