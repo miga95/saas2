@@ -1,7 +1,10 @@
+import { Suspense } from 'react';
 import PreviewClient from './preview-client';
 
-export default function Preview() {
+export default function PreviewPage() {
   return (
-    <PreviewClient />
+    <Suspense fallback={<div>Loading...</div>}>
+      <PreviewClient />
+    </Suspense>
   );
 }
