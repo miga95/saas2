@@ -50,11 +50,6 @@ export function Navigation() {
         >
           <link.icon className="h-4 w-4" />
           {link.label}
-          {link.badge && (
-            <span className="ml-auto text-[10px] font-medium bg-purple-600 px-1.5 py-0.5 rounded">
-              {link.badge}
-            </span>
-          )}
         </Link>
       ))}
     </>
