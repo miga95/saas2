@@ -21,9 +21,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <div className="flex h-screen bg-slate-950">
+          <div className="flex min-h-screen bg-slate-950">
             <Sidebar />
-            <main className="flex-1">
+            <main className="flex-1 md:ml-64">
               {children}
             </main>
           </div>
@@ -33,4 +33,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}     
+}
