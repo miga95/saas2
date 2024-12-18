@@ -6,8 +6,8 @@ import { useAvatars } from '@/hooks/use-avatars';
 import { useVoices } from '@/hooks/use-voices';
 import { Avatar } from '@/types/avatar';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from 'sonner';
 import { AvatarGridSkeleton } from './avatar-grid-skeleton';
 import { AvatarList } from './avatar-list';
@@ -31,6 +31,7 @@ export function AvatarGrid({ filters, text, aspectRatio }: AvatarGridProps) {
   const [selectedAccentId, setSelectedAccentId] = useState<string | null>(null);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string | null>(null);
   const [greenScreen, setGreenScreen] = useState(false);
+  const [captions, setCaptions] = useState(false);
   const { generatePreview, isGenerating } = usePreview();
   const { data: avatars, isLoading } = useAvatars(filters);
   const { data: voices } = useVoices();
@@ -43,7 +44,8 @@ export function AvatarGrid({ filters, text, aspectRatio }: AvatarGridProps) {
         text,
         aspectRatio,
         accentId: selectedAccentId,
-        greenScreen
+        greenScreen,
+        noCaption: !captions
       });
       toast.success('Preview generation started');
     } catch (error) {
@@ -57,16 +59,30 @@ export function AvatarGrid({ filters, text, aspectRatio }: AvatarGridProps) {
     <div className="relative min-h-[600px]">
       <div className="space-y-8 pb-32">
         <div className="px-4">
-          <div className="mb-4 flex items-center justify-end space-x-2">
-            <Switch
-              id="green-screen"
-              checked={greenScreen}
-              onCheckedChange={setGreenScreen}
-            />
-            <Label htmlFor="green-screen">
-              {greenScreen ? 'No Background' : 'With Background'}
-            </Label>
+          <div className="mb-6 flex items-start justify-start gap-8">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="background"
+                checked={!greenScreen}
+                onCheckedChange={(checked) => setGreenScreen(!checked)}
+              />
+              <Label htmlFor="background">
+                Background
+              </Label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="captions"
+                checked={captions}
+                onCheckedChange={(checked) => setCaptions(!!checked)}
+              />
+              <Label htmlFor="captions">
+                Show Captions
+              </Label>
+            </div>
           </div>
+
           <AvatarList
             avatars={avatars || []}
             selectedAvatar={selectedAvatar}

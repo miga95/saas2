@@ -25,12 +25,6 @@ export function Navigation() {
       label: 'Projects',
     },
     {
-      href: '/custom-avatars',
-      icon: UserCircle2,
-      label: 'Custom Avatars',
-      badge: 'NEW',
-    },
-    {
       href: '/pricing',
       icon: CreditCard,
       label: 'Pricing',

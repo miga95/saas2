@@ -44,7 +44,7 @@ interface PreviewResponse {
   background_asset_image_url: string | null;
 }
 
-export default function EditorClient() {
+export default function PreviewClient() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -68,7 +68,8 @@ export default function EditorClient() {
       return data ? false : 3000;
     },
   });
-
+  
+  console.log("data", data);
   useEffect(() => {
     if (!data?.preview) return;
   }, [data?.preview]);
@@ -91,8 +92,7 @@ export default function EditorClient() {
           no_caption: data.no_caption,
           background_asset_image_url: data.background_asset_image_url
         }),
-      });
-
+      })
       const responseData = await response.json();
       if (!response.ok) {
         if (response.status === 402) {

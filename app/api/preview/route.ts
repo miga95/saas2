@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
     const body = await req.json();
-    const { avatarId, text, aspectRatio, backgroundAssetImageUrl, accentId, greenScreen } = body;
+    const { avatarId, text, aspectRatio, backgroundAssetImageUrl, accentId, greenScreen, noCaption } = body;
 
     const formattedRatio = aspectRatio?.replace(':', 'x') || '9x16';
     const response = await fetch('https://api.creatify.ai/api/lipsyncs/preview/', {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         green_screen: greenScreen || false,
         webhook_url: null,
         accent: accentId,
-        no_caption: false,
+        no_caption: noCaption,
         no_music: false,
         caption_style: 'normal-white',
         caption_position: 'center',

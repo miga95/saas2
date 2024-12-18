@@ -54,7 +54,7 @@ export default function ProjectPage() {
   });
 
   const isRendering = !project || project.status !== 'done';
-
+  console.log(project);
   return (
     <div className="flex min-h-screen bg-slate-950">
       <div className="flex-1 flex items-center justify-center p-4">
@@ -105,7 +105,10 @@ export default function ProjectPage() {
                   </div>
                   <div className="flex justify-center">
                     <Button
-                      onClick={() => window.open(project.output!, '_blank')}
+                      onClick={() => {
+                        const downloadUrl = `/api/lipsyncs/download?url=${encodeURIComponent(project.output!)}`;
+                        window.location.href = downloadUrl;
+                      }}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
                       Download Video

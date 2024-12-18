@@ -23,9 +23,10 @@ interface PreviewInput {
   aspectRatio?: '9:16' | '16:9' | '1:1';
   accentId?: string | null;
   greenScreen?: boolean;
+  noCaption?: boolean;
 }
 
-async function generatePreview(input: PreviewInput): Promise<PreviewResponse> {
+async function generatePreview(input: PreviewInput): Promise<PreviewResponse> {    
   try {
     const response = await fetch('/api/preview', {
       method: 'POST',
@@ -64,7 +65,7 @@ export function usePreview() {
       toast.dismiss();
       toast.success('Preview generation started');
       // Rediriger vers l'éditeur avec l'ID de la prévisualisation
-      router.push(`/editor?previewId=${data.id}`);
+      router.push(`/preview?previewId=${data.id}`);
     },
     onError: (error: Error) => {
       console.error('[PREVIEW_MUTATION_ERROR]', {

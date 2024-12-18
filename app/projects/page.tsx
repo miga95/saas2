@@ -98,7 +98,7 @@ export default function ProjectsPage() {
                 className="bg-slate-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer"
                 onClick={() => {
                   if (project.progress === 0) {
-                    router.push(`/editor?previewId=${project.id}`);
+                    router.push(`/preview?previewId=${project.id}`);
                   } else {
                     router.push(`/project/${project.id}`);
                   }
